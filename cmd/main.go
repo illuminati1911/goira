@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	accrepo "github.com/illuminati1911/goira/pkg/accontrol/repository"
+	accrepo "github.com/illuminati1911/goira/internal/accontrol/repository"
 
 	"github.com/boltdb/bolt"
 )
@@ -27,6 +27,6 @@ func initbolt() *bolt.DB {
 
 func main() {
 	db := initbolt()
-	accrepo.NewBoltRepository(db, DBBucket)
 	defer db.Close()
+	accrepo.NewBoltRepository(db, DBBucket)
 }

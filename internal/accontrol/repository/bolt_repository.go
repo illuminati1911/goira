@@ -1,11 +1,11 @@
-package accrepo
+package repository
 
 import (
 	"encoding/json"
 
 	"github.com/boltdb/bolt"
-	"github.com/illuminati1911/goira/pkg/accontrol"
-	"github.com/illuminati1911/goira/pkg/models"
+	"github.com/illuminati1911/goira/internal/accontrol"
+	"github.com/illuminati1911/goira/internal/models"
 )
 
 type BoltRepository struct {

@@ -1,7 +1,7 @@
 package accontrol
 
 import (
-	"github.com/illuminati1911/goira/pkg/models"
+	"github.com/illuminati1911/goira/internal/models"
 )
 
 type Repository interface {
