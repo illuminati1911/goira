@@ -31,15 +31,9 @@ func (b *BoltRepository) GetCurrentState() (models.ACState, error) {
 	err := b.db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(b.bucket))
 		v := b.Get([]byte(StateKey))
-		if err := json.Unmarshal(v, state); err != nil {
-			return err
-		}
-		return nil
+		return json.Unmarshal(v, &state)
 	})
-	if err != nil {
-		return models.ACState{}, err
-	}
-	return state, nil
+	return state, err
 }
 
 func (b *BoltRepository) GetPassword() (string, error) {
@@ -50,10 +44,7 @@ func (b *BoltRepository) GetPassword() (string, error) {
 		password = string(v)
 		return nil
 	})
-	if err != nil {
-		return "", err
-	}
-	return password, nil
+	return password, err
 }
 
 func (b *BoltRepository) GetToken() (string, error) {
@@ -64,10 +55,7 @@ func (b *BoltRepository) GetToken() (string, error) {
 		token = string(v)
 		return nil
 	})
-	if err != nil {
-		return "", err
-	}
-	return token, nil
+	return token, err
 }
 
 func (b *BoltRepository) SetState(state models.ACState) error {
@@ -77,23 +65,20 @@ func (b *BoltRepository) SetState(state models.ACState) error {
 		if err != nil {
 			return err
 		}
-		err = b.Put([]byte(StateKey), bytes)
-		return err
+		return b.Put([]byte(StateKey), bytes)
 	})
 }
 
 func (b *BoltRepository) SetPassword(pwd string) error {
 	return b.db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(b.bucket))
-		err := b.Put([]byte(PasswordKey), []byte(pwd))
-		return err
+		return b.Put([]byte(PasswordKey), []byte(pwd))
 	})
 }
 
 func (b *BoltRepository) SetToken(tkn string) error {
 	return b.db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(b.bucket))
-		err := b.Put([]byte(TokenKey), []byte(tkn))
-		return err
+		return b.Put([]byte(TokenKey), []byte(tkn))
 	})
 }
