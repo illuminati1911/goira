@@ -5,16 +5,20 @@ import (
 	"os"
 	"time"
 
-	accrepo "github.com/illuminati1911/goira/internal/accontrol/repository"
+	_accrepo "github.com/illuminati1911/goira/internal/accontrol/repository"
+	_acservice "github.com/illuminati1911/goira/internal/accontrol/service"
+	_authrepo "github.com/illuminati1911/goira/internal/auth/repository"
+	_authservice "github.com/illuminati1911/goira/internal/auth/service"
 
 	"github.com/boltdb/bolt"
 )
 
 const (
-	DBName    string        = "goira.db"
-	DBBucket  string        = "accbucket"
-	DBMode    os.FileMode   = 0600
-	DBTimeout time.Duration = 1 * time.Second
+	DBName       string        = "goira.db"
+	DBACBucket   string        = "accbucket"
+	DBAuthBucket string        = "authbucket"
+	DBMode       os.FileMode   = 0600
+	DBTimeout    time.Duration = 1 * time.Second
 )
 
 func initbolt() *bolt.DB {
@@ -28,5 +32,10 @@ func initbolt() *bolt.DB {
 func main() {
 	db := initbolt()
 	defer db.Close()
-	accrepo.NewBoltRepository(db, DBBucket)
+	dbAC := _accrepo.NewBoltACRepository(db, DBACBucket)
+	dbAuth := _authrepo.NewBoltAuthRepository(db, DBAuthBucket)
+	serviceAC := _acservice.NewACService(dbAC)
+	serviceAuth := _authservice.NewAuthService(dbAuth, "dev_pwd")
+	println(serviceAC)
+	print(serviceAuth)
 }
