@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"encoding/json"
 	"errors"
 	"log"
 
@@ -54,27 +55,33 @@ func (b *BoltAuthRepository) SetPassword(pwd models.Password) error {
 	})
 }
 
-func (b *BoltAuthRepository) IsTokenValid(tkn models.Token) bool {
+func (b *BoltAuthRepository) GetToken(tknvalue string) (models.Token, error) {
+	var tkn models.Token
 	err := b.db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(b.bucket))
-		if b.Get([]byte(tkn)) == nil {
-			return errors.New("Token is invalid")
+		v := b.Get([]byte(tknvalue))
+		if v == nil {
+			return errors.New("Token not found")
 		}
-		return nil
+		return json.Unmarshal(v, &tkn)
 	})
-	return err == nil
+	return tkn, err
 }
 
 func (b *BoltAuthRepository) SetToken(tkn models.Token) error {
 	return b.db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(b.bucket))
-		return b.Put([]byte(tkn), []byte(tkn))
+		bytes, err := json.Marshal(tkn)
+		if err != nil {
+			return err
+		}
+		return b.Put([]byte(tkn.Value), bytes)
 	})
 }
 
-func (b *BoltAuthRepository) DeleteToken(tkn models.Token) error {
+func (b *BoltAuthRepository) DeleteToken(tknvalue string) error {
 	return b.db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(b.bucket))
-		return b.Put([]byte(TokenKey), []byte(tkn))
+		return b.Delete([]byte(tknvalue))
 	})
 }

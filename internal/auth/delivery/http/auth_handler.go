@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/illuminati1911/goira/internal/middleware"
 
@@ -58,11 +57,9 @@ func (h *HTTPAuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO: Move the expiration to service.
-	//
 	http.SetCookie(w, &http.Cookie{
-		Name:    "session_token",
-		Value:   token,
-		Expires: time.Now().Add(5 * time.Minute),
+		Name:    token.Name,
+		Value:   token.Value,
+		Expires: token.Expires,
 	})
 }

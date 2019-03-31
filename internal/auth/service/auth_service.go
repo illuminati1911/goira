@@ -3,6 +3,7 @@ package service
 import (
 	"errors"
 	"log"
+	"time"
 
 	"github.com/google/uuid"
 
@@ -29,21 +30,32 @@ func NewAuthService(repo auth.Repository, defaultpwd models.Password) auth.Servi
 	return &authService
 }
 
-func (as *AuthService) IsAccessTokenValid(tkn models.Token) bool {
-	return as.repo.IsTokenValid(tkn)
+func (as *AuthService) IsAccessTokenValid(tknvalue string) bool {
+	token, err := as.repo.GetToken(tknvalue)
+	if err != nil {
+		return false
+	}
+	if token.Expires.Before(time.Now()) {
+		// Handle error here, don't just return bool
+		//
+		as.repo.DeleteToken(tknvalue)
+		return false
+	}
+	return true
 }
 
 func (as *AuthService) RequestAccessToken(userpwd models.Password) (models.Token, error) {
 	systempwd, err := as.repo.GetPassword()
 	if err != nil {
-		return "", err
+		return models.Token{}, err
 	}
 	if systempwd != userpwd {
-		return "", errors.New("Wrong password")
+		return models.Token{}, errors.New("Wrong password")
 	}
-	token, err := uuid.NewRandom()
+	uuidtoken, err := uuid.NewRandom()
 	if err != nil {
-		return "", errors.New("System failure")
+		return models.Token{}, errors.New("System failure")
 	}
-	return token.String(), as.repo.SetToken(token.String())
+	token := models.Token{Name: "session_token", Value: uuidtoken.String(), Expires: time.Now().Add(5 * time.Minute)}
+	return token, as.repo.SetToken(token)
 }
