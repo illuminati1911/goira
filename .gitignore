@@ -13,3 +13,4 @@
 
 # boltDB files
 *.db
+*.db.lock
