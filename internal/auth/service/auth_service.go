@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"log"
 
 	"github.com/google/uuid"
 
@@ -18,13 +19,13 @@ type AuthService struct {
 //
 func NewAuthService(repo auth.Repository, defaultpwd models.Password) auth.Service {
 	authService := AuthService{repo: repo}
-	/*_, err := repo.GetPassword()
+	_, err := repo.GetPassword()
 	if err == nil {
 		return &authService
 	}
 	if repo.SetPassword(defaultpwd) != nil {
 		log.Fatal("Auth: Can't create default password")
-	}*/
+	}
 	return &authService
 }
 

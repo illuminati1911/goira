@@ -2,11 +2,13 @@ package main
 
 import (
 	"log"
+	"net/http"
 	"os"
 	"time"
 
 	_accrepo "github.com/illuminati1911/goira/internal/accontrol/repository"
 	_acservice "github.com/illuminati1911/goira/internal/accontrol/service"
+	_authHandler "github.com/illuminati1911/goira/internal/auth/delivery/http"
 	_authrepo "github.com/illuminati1911/goira/internal/auth/repository"
 	_authservice "github.com/illuminati1911/goira/internal/auth/service"
 
@@ -36,6 +38,8 @@ func main() {
 	dbAuth := _authrepo.NewBoltAuthRepository(db, DBAuthBucket)
 	serviceAC := _acservice.NewACService(dbAC)
 	serviceAuth := _authservice.NewAuthService(dbAuth, "dev_pwd")
+	_authHandler.NewHTTPAuthHandler(serviceAuth)
+	log.Fatal(http.ListenAndServe(":8080", nil))
 	println(serviceAC)
 	print(serviceAuth)
 }
