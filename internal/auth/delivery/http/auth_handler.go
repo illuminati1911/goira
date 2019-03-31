@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/illuminati1911/goira/internal/middleware"
+
 	"github.com/illuminati1911/goira/internal/models"
 
 	"github.com/illuminati1911/goira/internal/auth"
@@ -25,24 +27,16 @@ func NewHTTPAuthHandler(as auth.Service) {
 	handler := &HTTPAuthHandler{
 		as,
 	}
+	requireAuth := middleware.AuthMiddleware(as)
 	http.HandleFunc("/login", handler.Login)
-	http.HandleFunc("/test", handler.Test)
+	http.HandleFunc("/test", requireAuth(handler.Test))
 }
 
 // Test is for testing authentication.
 // Development use only.
 //
 func (h *HTTPAuthHandler) Test(w http.ResponseWriter, r *http.Request) {
-	c, err := r.Cookie("session_token")
-	if err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		return
-	}
-	if h.as.IsAccessTokenValid(c.Value) {
-		fmt.Fprint(w, "Valid")
-	} else {
-		w.WriteHeader(http.StatusUnauthorized)
-	}
+	fmt.Fprint(w, "Valid")
 }
 
 // Login is a handler for getting session token
