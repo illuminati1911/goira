@@ -5,8 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/illuminati1911/goira/internal/middleware"
-
+	mw "github.com/illuminati1911/goira/internal/middleware"
 	"github.com/illuminati1911/goira/internal/models"
 
 	"github.com/illuminati1911/goira/internal/auth"
@@ -26,11 +25,10 @@ func NewHTTPAuthHandler(as auth.Service) {
 	handler := &HTTPAuthHandler{
 		as,
 	}
-	requireAuth := middleware.AuthMiddleware(as)
-	// TODO: Limits to POST only
-	//
-	http.HandleFunc("/login", handler.Login)
-	http.HandleFunc("/test", requireAuth(handler.Test))
+	requireAuth := mw.AuthMiddleware(as)
+	requireAuthGet := mw.Join(requireAuth, mw.GetOnly)
+	http.HandleFunc("/login", mw.PostOnly(handler.Login))
+	http.HandleFunc("/test", requireAuthGet(handler.Test))
 }
 
 // Test is for testing authentication.
