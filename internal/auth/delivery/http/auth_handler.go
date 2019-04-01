@@ -27,6 +27,8 @@ func NewHTTPAuthHandler(as auth.Service) {
 		as,
 	}
 	requireAuth := middleware.AuthMiddleware(as)
+	// TODO: Limits to POST only
+	//
 	http.HandleFunc("/login", handler.Login)
 	http.HandleFunc("/test", requireAuth(handler.Test))
 }

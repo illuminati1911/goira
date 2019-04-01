@@ -10,8 +10,8 @@ import (
 // for the status of the session_token before rpoceeding to the actual business
 // logic handling.
 //
-func AuthMiddleware(as auth.Service) func(f http.HandlerFunc) func(w http.ResponseWriter, r *http.Request) {
-	return func(f http.HandlerFunc) func(w http.ResponseWriter, r *http.Request) {
+func AuthMiddleware(as auth.Service) func(f http.HandlerFunc) http.HandlerFunc {
+	return func(f http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
 			c, err := r.Cookie("session_token")
 			if err != nil {
