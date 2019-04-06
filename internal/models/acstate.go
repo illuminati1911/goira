@@ -1,7 +1,7 @@
 package models
 
 type ACState struct {
-	Temperature int
-	WindLevel   int
-	Active      bool
+	Temperature *int  `json:"temp"`
+	WindLevel   *int  `json:"wind"`
+	Active      *bool `json:"active"`
 }

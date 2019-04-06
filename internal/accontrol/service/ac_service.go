@@ -1,7 +1,10 @@
 package service
 
 import (
+	"log"
+
 	"github.com/illuminati1911/goira/internal/accontrol"
+	"github.com/illuminati1911/goira/internal/models"
 )
 
 // ACService is a structure containing all the services and action of the AC system.
@@ -14,66 +17,44 @@ type ACService struct {
 // NewACService creates new ACService with storage system implementing
 // repository interface.
 //
-func NewACService(repo accontrol.Repository) accontrol.Service {
+func NewACService(repo accontrol.Repository, defaultState models.ACState) accontrol.Service {
+	_, err := repo.GetCurrentState()
+	if err == nil {
+		return &ACService{repo: repo}
+	}
+
+	if repo.SetState(defaultState) != nil {
+		log.Fatal("Could not se default state to ACControl")
+	}
 	return &ACService{repo: repo}
 }
 
-// SetTemperature sets the output temperature of the AC. From 16c to 30c.
-//
-func (acs *ACService) SetTemperature(temp int) error {
-	// Call RPi here
-	//...
-
-	// if success, save state to DB
+func (acs *ACService) SetState(newState models.ACState) error {
 	state, err := acs.repo.GetCurrentState()
 	if err != nil {
 		return err
 	}
-	state.Temperature = temp
-	return acs.repo.SetState(state)
+	mergedState := merge(state, newState)
+	// Call RPi here
+	//...
+
+	// if success, save state to DB
+	return acs.repo.SetState(mergedState)
 }
 
-// SetWindLevel sets wind level for the AC.
-//
-func (acs *ACService) SetWindLevel(level int) error {
-	// Call RPi here
-	//...
-
-	// if success, save state to DB
-	state, err := acs.repo.GetCurrentState()
-	if err != nil {
-		return err
-	}
-	state.WindLevel = level
-	return acs.repo.SetState(state)
+func (acs *ACService) GetState() (models.ACState, error) {
+	return acs.repo.GetCurrentState()
 }
 
-// TurnOn turns on the AC
-//
-func (acs *ACService) TurnOn() error {
-	// Call RPi here
-	//...
-
-	// if success, save state to DB
-	state, err := acs.repo.GetCurrentState()
-	if err != nil {
-		return err
+func merge(current models.ACState, new models.ACState) models.ACState {
+	if new.Temperature != nil {
+		current.Temperature = new.Temperature
 	}
-	state.Active = true
-	return acs.repo.SetState(state)
-}
-
-// TurnOff turns off the AC
-//
-func (acs *ACService) TurnOff() error {
-	// Call RPi here
-	//...
-
-	// if success, save state to DB
-	state, err := acs.repo.GetCurrentState()
-	if err != nil {
-		return err
+	if new.Active != nil {
+		current.Active = new.Active
 	}
-	state.Active = false
-	return acs.repo.SetState(state)
+	if new.WindLevel != nil {
+		current.WindLevel = new.WindLevel
+	}
+	return current
 }

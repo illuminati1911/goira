@@ -1,8 +1,10 @@
 package accontrol
 
+import (
+	"github.com/illuminati1911/goira/internal/models"
+)
+
 type Service interface {
-	SetTemperature(temp int) error
-	SetWindLevel(level int) error
-	TurnOn() error
-	TurnOff() error
+	SetState(models.ACState) error
+	GetState() (models.ACState, error)
 }

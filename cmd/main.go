@@ -6,6 +6,9 @@ import (
 	"os"
 	"time"
 
+	"github.com/illuminati1911/goira/internal/models"
+
+	_acHandler "github.com/illuminati1911/goira/internal/accontrol/delivery/http"
 	_accrepo "github.com/illuminati1911/goira/internal/accontrol/repository"
 	_acservice "github.com/illuminati1911/goira/internal/accontrol/service"
 	_authHandler "github.com/illuminati1911/goira/internal/auth/delivery/http"
@@ -34,12 +37,14 @@ func initbolt() *bolt.DB {
 func main() {
 	db := initbolt()
 	defer db.Close()
-	dbAC := _accrepo.NewBoltACRepository(db, DBACBucket)
 	dbAuth := _authrepo.NewBoltAuthRepository(db, DBAuthBucket)
-	serviceAC := _acservice.NewACService(dbAC)
+	dbAC := _accrepo.NewBoltACRepository(db, DBACBucket)
 	serviceAuth := _authservice.NewAuthService(dbAuth, "dev_pwd")
+	temp := 20
+	wind := 0
+	active := false
+	serviceAC := _acservice.NewACService(dbAC, models.ACState{Temperature: &temp, WindLevel: &wind, Active: &active})
 	_authHandler.NewHTTPAuthHandler(serviceAuth)
+	_acHandler.NewHTTPACControlHandler(serviceAC, serviceAuth)
 	log.Fatal(http.ListenAndServe(":8080", nil))
-	println(serviceAC)
-	print(serviceAuth)
 }

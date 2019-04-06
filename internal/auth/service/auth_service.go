@@ -19,15 +19,14 @@ type AuthService struct {
 // repository interface defined in auth package.
 //
 func NewAuthService(repo auth.Repository, defaultpwd models.Password) auth.Service {
-	authService := AuthService{repo: repo}
 	_, err := repo.GetPassword()
 	if err == nil {
-		return &authService
+		return &AuthService{repo: repo}
 	}
 	if repo.SetPassword(defaultpwd) != nil {
 		log.Fatal("Auth: Can't create default password")
 	}
-	return &authService
+	return &AuthService{repo: repo}
 }
 
 func (as *AuthService) IsAccessTokenValid(tknvalue string) bool {
