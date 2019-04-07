@@ -12,6 +12,6 @@ func NewGPIOInterface() accontrol.HWInterface {
 	return &GPIOInterface{}
 }
 
-func (acs *GPIOInterface) SetState(newState models.ACState) error {
+func (gpio *GPIOInterface) SetState(newState models.ACState) error {
 	return nil
 }

@@ -9,6 +9,7 @@ import (
 	"github.com/illuminati1911/goira/internal/models"
 
 	_acHandler "github.com/illuminati1911/goira/internal/accontrol/delivery/http"
+	"github.com/illuminati1911/goira/internal/accontrol/hwinterface"
 	_accrepo "github.com/illuminati1911/goira/internal/accontrol/repository"
 	_acservice "github.com/illuminati1911/goira/internal/accontrol/service"
 	_authHandler "github.com/illuminati1911/goira/internal/auth/delivery/http"
@@ -43,7 +44,8 @@ func main() {
 	temp := 20
 	wind := 0
 	active := false
-	serviceAC := _acservice.NewACService(dbAC, models.ACState{Temperature: &temp, WindLevel: &wind, Active: &active})
+	gpio := hwinterface.GPIOInterface{}
+	serviceAC := _acservice.NewACService(dbAC, models.ACState{Temperature: &temp, WindLevel: &wind, Active: &active}, &gpio)
 	_authHandler.NewHTTPAuthHandler(serviceAuth)
 	_acHandler.NewHTTPACControlHandler(serviceAC, serviceAuth)
 	log.Fatal(http.ListenAndServe(":8080", nil))

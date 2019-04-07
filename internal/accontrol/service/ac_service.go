@@ -1,6 +1,8 @@
 package service
 
 import (
+	"errors"
+	"fmt"
 	"log"
 
 	"github.com/illuminati1911/goira/internal/accontrol"
@@ -12,12 +14,13 @@ import (
 //
 type ACService struct {
 	repo accontrol.Repository
+	hwif accontrol.HWInterface
 }
 
 // NewACService creates new ACService with storage system implementing
 // repository interface.
 //
-func NewACService(repo accontrol.Repository, defaultState models.ACState) accontrol.Service {
+func NewACService(repo accontrol.Repository, defaultState models.ACState, gpioif accontrol.HWInterface) accontrol.Service {
 	_, err := repo.GetCurrentState()
 	if err == nil {
 		return &ACService{repo: repo}
@@ -26,7 +29,7 @@ func NewACService(repo accontrol.Repository, defaultState models.ACState) accont
 	if repo.SetState(defaultState) != nil {
 		log.Fatal("Could not se default state to ACControl")
 	}
-	return &ACService{repo: repo}
+	return &ACService{repo: repo, hwif: gpioif}
 }
 
 func (acs *ACService) SetState(newState models.ACState) error {
@@ -35,10 +38,10 @@ func (acs *ACService) SetState(newState models.ACState) error {
 		return err
 	}
 	mergedState := merge(state, newState)
-	// Call RPi here
-	//...
-
-	// if success, save state to DB
+	if acs.hwif.SetState(mergedState) != nil {
+		fmt.Println("GPIO link failure")
+		return errors.New("IR Hardware failure")
+	}
 	return acs.repo.SetState(mergedState)
 }
 
