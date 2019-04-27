@@ -6,7 +6,7 @@ package hwinterface
 // #include "ir_interface.h"
 import "C"
 import (
-	"fmt"
+	"errors"
 	"unsafe"
 	"github.com/illuminati1911/goira/internal/accontrol"
 	"github.com/illuminati1911/goira/internal/models"
