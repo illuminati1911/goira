@@ -23,7 +23,7 @@ type ACService struct {
 func NewACService(repo accontrol.Repository, defaultState models.ACState, gpioif accontrol.HWInterface) accontrol.Service {
 	_, err := repo.GetCurrentState()
 	if err == nil {
-		return &ACService{repo: repo}
+		return &ACService{repo: repo, hwif: gpioif}
 	}
 
 	if repo.SetState(defaultState) != nil {
@@ -58,6 +58,9 @@ func merge(current models.ACState, new models.ACState) models.ACState {
 	}
 	if new.WindLevel != nil {
 		current.WindLevel = new.WindLevel
+	}
+	if new.Mode != nil {
+		current.Mode = new.Mode
 	}
 	return current
 }

@@ -13,5 +13,6 @@ func NewGPIOInterface() accontrol.HWInterface {
 }
 
 func (gpio *GPIOInterface) SetState(newState models.ACState) error {
+	newState.String()
 	return nil
 }

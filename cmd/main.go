@@ -43,9 +43,10 @@ func main() {
 	serviceAuth := _authservice.NewAuthService(dbAuth, "dev_pwd")
 	temp := 20
 	wind := 0
+	mode := 0
 	active := false
 	gpio := hwinterface.NewGPIOInterface()
-	serviceAC := _acservice.NewACService(dbAC, models.ACState{Temperature: &temp, WindLevel: &wind, Active: &active}, gpio)
+	serviceAC := _acservice.NewACService(dbAC, models.ACState{Temperature: &temp, WindLevel: &wind, Mode: &mode, Active: &active}, gpio)
 	_authHandler.NewHTTPAuthHandler(serviceAuth)
 	_acHandler.NewHTTPACControlHandler(serviceAC, serviceAuth)
 	log.Fatal(http.ListenAndServe(":8080", nil))
