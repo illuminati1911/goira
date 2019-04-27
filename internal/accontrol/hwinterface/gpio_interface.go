@@ -1,6 +1,13 @@
 package hwinterface
 
+// #cgo CFLAGS: -g -Wall
+// #cgo LDFLAGS: -lm -lpigpio -pthread -lrt
+// #include <stdlib.h>
+// #include "ir_interface.h"
+import "C"
 import (
+	"fmt"
+	"unsafe"
 	"github.com/illuminati1911/goira/internal/accontrol"
 	"github.com/illuminati1911/goira/internal/models"
 )
@@ -13,6 +20,12 @@ func NewGPIOInterface() accontrol.HWInterface {
 }
 
 func (gpio *GPIOInterface) SetState(newState models.ACState) error {
-	newState.String()
+	pin := C.uint(27)
+	data := C.CString(newState.String())
+	defer C.free(unsafe.Pointer(data))
+	err := C.runIR(pin, data)
+	if err != 0 {
+		return errors.New("Failure sending IR")
+	}
 	return nil
 }
