@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"time"
+	"fmt"
 	"encoding/json"
 	"errors"
 	"log"
@@ -83,5 +85,28 @@ func (b *BoltAuthRepository) DeleteToken(tknvalue string) error {
 	return b.db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(b.bucket))
 		return b.Delete([]byte(tknvalue))
+	})
+}
+
+func (b *BoltAuthRepository) CleanUp() {
+	b.db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte(b.bucket))
+		c := b.Cursor()
+		var toDelete [][]byte
+		for k, v := c.First(); k != nil; k, v = c.Next() {
+			var tkn models.Token
+			if json.Unmarshal(v, &tkn) != nil {
+				toDelete = append(toDelete, k)
+				continue
+			}
+			fmt.Printf("key=%s, value=%s\n", k, tkn.Expires)
+			if tkn.Expires.Before(time.Now()) {
+				toDelete = append(toDelete, k)
+			}
+		}
+		for _, key := range toDelete {
+			b.Delete(key)
+		}
+		return nil
 	})
 }

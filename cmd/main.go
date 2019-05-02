@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"os/signal"
 	"log"
 	"net/http"
 	"os"
@@ -9,6 +11,7 @@ import (
 	"github.com/illuminati1911/goira/internal/models"
 	
 	"github.com/illuminati1911/goira/internal/accontrol"
+	"github.com/illuminati1911/goira/internal/auth"
 	_acHandler "github.com/illuminati1911/goira/internal/accontrol/delivery/http"
 	"github.com/illuminati1911/goira/internal/accontrol/hwinterface"
 	_accrepo "github.com/illuminati1911/goira/internal/accontrol/repository"
@@ -21,6 +24,7 @@ import (
 	"github.com/boltdb/bolt"
 )
 
+// App wide constants.
 const (
 	DBName       string        = "goira.db"
 	DBACBucket   string        = "accbucket"
@@ -49,13 +53,42 @@ func hardwareInfo() accontrol.HWInterface {
 	return hwinterface.NewGPIOInterface(mappers.NewChangHong(), 27)
 }
 
+// Make check and clean up fror expired tokens
+// every 1 hour.
+func tokenCleanUp(repo auth.Repository) *time.Ticker {
+	ticker := time.NewTicker(1 * time.Hour)
+	go func() {
+        for range ticker.C {
+            repo.CleanUp()
+        }
+	}()
+	return ticker
+}
+
+// Graceful shutdown for SIGINT.
+//
+func handleShutdown(t *time.Ticker, b *bolt.DB) {
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+	go func() {
+		for range c {
+			fmt.Println("Shutdown...")
+			t.Stop()
+			b.Close()
+			os.Exit(0)
+		}
+	}()
+}
+
 func main() {
+	// Init BoltDB.
+	//
 	db := initbolt()
 	defer db.Close()
-
 	// Repositories
 	//
 	dbAuth := _authrepo.NewBoltAuthRepository(db, DBAuthBucket)
+	dbAuth.CleanUp()
 	dbAC := _accrepo.NewBoltACRepository(db, DBACBucket)
 	// Services
 	//
@@ -65,6 +98,10 @@ func main() {
 	//
 	_authHandler.NewHTTPAuthHandler(serviceAuth)
 	_acHandler.NewHTTPACControlHandler(serviceAC, serviceAuth)
+	// CleanUp
+	//
+	t := tokenCleanUp(dbAuth)
+	handleShutdown(t, db)
 	// Run HTTP
 	//
 	log.Fatal(http.ListenAndServe(":8080", nil))

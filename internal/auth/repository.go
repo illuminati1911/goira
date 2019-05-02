@@ -8,4 +8,5 @@ type Repository interface {
 	GetToken(string) (models.Token, error)
 	SetToken(models.Token) error
 	DeleteToken(string) error
+	CleanUp()
 }
