@@ -1,6 +1,7 @@
 package service
 
 import (
+	"sync"
 	"errors"
 	"fmt"
 	"log"
@@ -15,6 +16,7 @@ import (
 type ACService struct {
 	repo accontrol.Repository
 	hwif accontrol.HWInterface
+	mux sync.Mutex
 }
 
 // NewACService creates new ACService with storage system implementing
@@ -33,6 +35,8 @@ func NewACService(repo accontrol.Repository, defaultState models.ACState, gpioif
 }
 
 func (acs *ACService) SetState(newState models.ACState) error {
+	acs.mux.Lock()
+	defer acs.mux.Unlock()
 	state, err := acs.repo.GetCurrentState()
 	if err != nil {
 		return err
@@ -46,6 +50,8 @@ func (acs *ACService) SetState(newState models.ACState) error {
 }
 
 func (acs *ACService) GetState() (models.ACState, error) {
+	acs.mux.Lock()
+	defer acs.mux.Unlock()
 	return acs.repo.GetCurrentState()
 }
 
