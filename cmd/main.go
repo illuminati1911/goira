@@ -15,6 +15,7 @@ import (
 	_authHandler "github.com/illuminati1911/goira/internal/auth/delivery/http"
 	_authrepo "github.com/illuminati1911/goira/internal/auth/repository"
 	_authservice "github.com/illuminati1911/goira/internal/auth/service"
+	"github.com/illuminati1911/goira/internal/accontrol/mappers"
 
 	"github.com/boltdb/bolt"
 )
@@ -45,7 +46,8 @@ func main() {
 	wind := 0
 	mode := 0
 	active := false
-	gpio := hwinterface.NewGPIOInterface()
+	chMapper := mappers.NewChangHong()
+	gpio := hwinterface.NewGPIOInterface(chMapper, 27)
 	serviceAC := _acservice.NewACService(dbAC, models.ACState{Temperature: &temp, WindLevel: &wind, Mode: &mode, Active: &active}, gpio)
 	_authHandler.NewHTTPAuthHandler(serviceAuth)
 	_acHandler.NewHTTPACControlHandler(serviceAC, serviceAuth)

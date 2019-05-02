@@ -13,15 +13,17 @@ import (
 )
 
 type GPIOInterface struct {
+	mapper accontrol.Mapper
+	pin uint
 }
 
-func NewGPIOInterface() accontrol.HWInterface {
-	return &GPIOInterface{}
+func NewGPIOInterface(mapper accontrol.Mapper, pin uint) accontrol.HWInterface {
+	return &GPIOInterface{mapper, pin}
 }
 
 func (gpio *GPIOInterface) SetState(newState models.ACState) error {
-	pin := C.uint(27)
-	data := C.CString(newState.String())
+	pin := C.uint(gpio.pin)
+	data := C.CString(gpio.mapper.MapToProtocolBinaryString(&newState))
 	defer C.free(unsafe.Pointer(data))
 	err := C.runIR(pin, data)
 	if err != 0 {
