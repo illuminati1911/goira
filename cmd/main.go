@@ -7,7 +7,8 @@ import (
 	"time"
 
 	"github.com/illuminati1911/goira/internal/models"
-
+	
+	"github.com/illuminati1911/goira/internal/accontrol"
 	_acHandler "github.com/illuminati1911/goira/internal/accontrol/delivery/http"
 	"github.com/illuminati1911/goira/internal/accontrol/hwinterface"
 	_accrepo "github.com/illuminati1911/goira/internal/accontrol/repository"
@@ -36,20 +37,36 @@ func initbolt() *bolt.DB {
 	return db
 }
 
-func main() {
-	db := initbolt()
-	defer db.Close()
-	dbAuth := _authrepo.NewBoltAuthRepository(db, DBAuthBucket)
-	dbAC := _accrepo.NewBoltACRepository(db, DBACBucket)
-	serviceAuth := _authservice.NewAuthService(dbAuth, "dev_pwd")
+func acDefaultState() models.ACState {
 	temp := 20
 	wind := 0
 	mode := 0
 	active := false
-	chMapper := mappers.NewChangHong()
-	gpio := hwinterface.NewGPIOInterface(chMapper, 27)
-	serviceAC := _acservice.NewACService(dbAC, models.ACState{Temperature: &temp, WindLevel: &wind, Mode: &mode, Active: &active}, gpio)
+	return models.ACState{Temperature: &temp, WindLevel: &wind, Mode: &mode, Active: &active}
+}
+
+func hardwareInfo() accontrol.HWInterface {
+	return hwinterface.NewGPIOInterface(mappers.NewChangHong(), 27)
+}
+
+func main() {
+	db := initbolt()
+	defer db.Close()
+
+	// Repositories
+	//
+	dbAuth := _authrepo.NewBoltAuthRepository(db, DBAuthBucket)
+	dbAC := _accrepo.NewBoltACRepository(db, DBACBucket)
+	// Services
+	//
+	serviceAuth := _authservice.NewAuthService(dbAuth, "dev_pwd")
+	serviceAC := _acservice.NewACService(dbAC, acDefaultState(), hardwareInfo())
+	// HTTP handlers
+	//
 	_authHandler.NewHTTPAuthHandler(serviceAuth)
 	_acHandler.NewHTTPACControlHandler(serviceAC, serviceAuth)
+	// Run HTTP
+	//
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
+
