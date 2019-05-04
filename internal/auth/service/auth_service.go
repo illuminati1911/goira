@@ -21,12 +21,12 @@ type AuthService struct {
 func NewAuthService(repo auth.Repository, defaultpwd models.Password) auth.Service {
 	_, err := repo.GetPassword()
 	if err == nil {
-		return &AuthService{repo: repo}
+		return &AuthService{repo}
 	}
 	if repo.SetPassword(defaultpwd) != nil {
 		log.Fatal("Auth: Can't create default password")
 	}
-	return &AuthService{repo: repo}
+	return &AuthService{repo}
 }
 
 func (as *AuthService) IsAccessTokenValid(tknvalue string) bool {
@@ -35,7 +35,7 @@ func (as *AuthService) IsAccessTokenValid(tknvalue string) bool {
 		return false
 	}
 	if token.Expires.Before(time.Now()) {
-		// Handle error here, don't just return bool
+		// TODO: Handle error here, don't just return bool
 		//
 		as.repo.DeleteToken(tknvalue)
 		return false
