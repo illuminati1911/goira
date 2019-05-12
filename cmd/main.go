@@ -96,13 +96,14 @@ func main() {
 	serviceAC := _acservice.NewACService(dbAC, acDefaultState(), hardwareInfo())
 	// HTTP handlers
 	//
-	_authHandler.NewHTTPAuthHandler(serviceAuth)
-	_acHandler.NewHTTPACControlHandler(serviceAC, serviceAuth)
+	mux := http.NewServeMux()
+	_authHandler.NewHTTPAuthHandler(serviceAuth, mux)
+	_acHandler.NewHTTPACControlHandler(serviceAC, serviceAuth, mux)
 	// CleanUp
 	//
 	t := tokenCleanUp(dbAuth)
 	handleShutdown(t, db)
 	// Run HTTP
 	//
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe(":8080", mux))
 }

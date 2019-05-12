@@ -21,14 +21,15 @@ type HTTPAuthHandler struct {
 // NewHTTPAuthHandler creates instance of HTTPAuthHandler and sets
 // authentication related routes.
 //
-func NewHTTPAuthHandler(as auth.Service) {
+func NewHTTPAuthHandler(as auth.Service, mux *http.ServeMux) *HTTPAuthHandler {
 	handler := &HTTPAuthHandler{
 		as,
 	}
 	requireAuth := mw.AuthMiddleware(as)
 	requireAuthGet := mw.Join(requireAuth, mw.GetOnly)
-	http.HandleFunc("/login", mw.PostOnly(handler.Login))
-	http.HandleFunc("/test", requireAuthGet(handler.Test))
+	mux.HandleFunc("/login", mw.PostOnly(handler.Login))
+	mux.HandleFunc("/test", requireAuthGet(handler.Test))
+	return handler
 }
 
 // Test is for testing authentication.
@@ -44,7 +45,7 @@ func (h *HTTPAuthHandler) Test(w http.ResponseWriter, r *http.Request) {
 func (h *HTTPAuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	var creds models.Credentials
 	err := json.NewDecoder(r.Body).Decode(&creds)
-	if err != nil {
+	if err != nil || creds.Password == "" {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusBadRequest)
 		return

@@ -23,15 +23,16 @@ type HTTPACControlHandler struct {
 // NewHTTPACControlHandler creates instance of HTTPACControlHandlerr and sets
 // AC control related routes.
 //
-func NewHTTPACControlHandler(as accontrol.Service, authS auth.Service) {
+func NewHTTPACControlHandler(as accontrol.Service, authS auth.Service, mux *http.ServeMux) *HTTPACControlHandler {
 	handler := &HTTPACControlHandler{
 		as,
 	}
 	requireAuth := mw.AuthMiddleware(authS)
 	requireAuthPost := mw.Join(requireAuth, mw.PostOnly)
 	requireAuthGet := mw.Join(requireAuth, mw.GetOnly)
-	http.HandleFunc("/status", requireAuthGet(handler.GetState))
-	http.HandleFunc("/state", requireAuthPost(handler.SetState))
+	mux.HandleFunc("/status", requireAuthGet(handler.GetState))
+	mux.HandleFunc("/state", requireAuthPost(handler.SetState))
+	return handler
 }
 
 func (h *HTTPACControlHandler) GetState(w http.ResponseWriter, r *http.Request) {
