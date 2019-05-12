@@ -1,3 +1,5 @@
+.DEFAULT_GOAL := install
+
 get-pigpio:
 	@echo "Fetching and installing pigpio..."
 	@git clone https://github.com/joan2937/pigpio.git
@@ -20,3 +22,4 @@ build:
 	@echo "Building Goira..."
 	@go build ./cmd/main.go
 	@echo "Build completed!"
+install: deps build
