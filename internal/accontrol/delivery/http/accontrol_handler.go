@@ -48,7 +48,6 @@ func (h *HTTPACControlHandler) GetState(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 	w.Write(jStatus)
-
 }
 
 func (h *HTTPACControlHandler) SetState(w http.ResponseWriter, r *http.Request) {
