@@ -1,19 +1,26 @@
 package mappers
 
 import (
-	"github.com/illuminati1911/goira/internal/models"
-	"github.com/illuminati1911/goira/internal/accontrol"
-	"github.com/illuminati1911/goira/internal/utils"
 	"fmt"
+
+	"github.com/illuminati1911/goira/internal/accontrol"
+	"github.com/illuminati1911/goira/internal/models"
+	"github.com/illuminati1911/goira/internal/utils"
 )
 
-type ChangHong struct {
-}
+// ChangHong is a mapper for ChangHong type ACs
+//
+type ChangHong struct{}
 
+// Creates now Instance of ChangHong mapper
+//
 func NewChangHong() accontrol.Mapper {
 	return &ChangHong{}
 }
 
+// MapToProtocolBinaryString will convert the ACState to binary string
+// representation
+//
 func (c *ChangHong) MapToProtocolBinaryString(ac *models.ACState) string {
 	bytes := stateAsBytes(ac)
 	bytes = append(bytes, checksum(bytes))
@@ -25,6 +32,8 @@ func (c *ChangHong) MapToProtocolBinaryString(ac *models.ACState) string {
 	return byteStr
 }
 
+// Converts the ACState to bytearray without the checksum.
+//
 func stateAsBytes(ac *models.ACState) []byte {
 	cTemp := utils.Clamp(16, 30, *ac.Temperature)
 	bTemp := byte(92 + cTemp)
@@ -35,12 +44,12 @@ func stateAsBytes(ac *models.ACState) []byte {
 		bActive = byte(0x00)
 	}
 	return []byte{
-		0x56,		// Header
-		bTemp,		// Temperature
+		0x56,  // Header
+		bTemp, // Temperature
 		0x00,
 		0x00,
-		bMode,		// AC mode
-		bActive,	// On or off
+		bMode,   // AC mode
+		bActive, // On or off
 		0x00,
 		0x00,
 		0x00,
@@ -52,6 +61,9 @@ func stateAsBytes(ac *models.ACState) []byte {
 	}
 }
 
+// Calculates the checksum for ChangHong AC's which is
+// sum of 4 bit chunks for the whole message.
+//
 func checksum(bytes []byte) byte {
 	var checksum byte = 0x00
 	for _, b := range bytes {

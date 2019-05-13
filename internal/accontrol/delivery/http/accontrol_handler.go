@@ -13,7 +13,7 @@ import (
 	"github.com/illuminati1911/goira/internal/auth"
 )
 
-// HTTPACControlHandler handles AC controle related routes
+// HTTPACControlHandler handles AC control related routes
 // with any type implementing auth.Service interface
 //
 type HTTPACControlHandler struct {
@@ -35,6 +35,9 @@ func NewHTTPACControlHandler(as accontrol.Service, authS auth.Service, mux *http
 	return handler
 }
 
+// GetState handler will get the current state of the AC from the
+// ac service.
+//
 func (h *HTTPACControlHandler) GetState(w http.ResponseWriter, r *http.Request) {
 	status, err := h.as.GetState()
 	if err != nil {
@@ -50,6 +53,9 @@ func (h *HTTPACControlHandler) GetState(w http.ResponseWriter, r *http.Request) 
 	w.Write(jStatus)
 }
 
+// SetState handler will parse new AC state from the request
+// pass it to the ac service SetState function.
+//
 func (h *HTTPACControlHandler) SetState(w http.ResponseWriter, r *http.Request) {
 	var state models.ACState
 	err := json.NewDecoder(r.Body).Decode(&state)

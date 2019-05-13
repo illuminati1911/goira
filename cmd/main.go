@@ -24,7 +24,8 @@ import (
 	"github.com/boltdb/bolt"
 )
 
-// App wide constants.
+// DB Constants
+//
 const (
 	DBName       string        = "goira.db"
 	DBACBucket   string        = "accbucket"
@@ -33,6 +34,8 @@ const (
 	DBTimeout    time.Duration = 1 * time.Second
 )
 
+// Initialize BoltDB database
+//
 func initbolt() *bolt.DB {
 	db, err := bolt.Open(DBName, DBMode, &bolt.Options{Timeout: DBTimeout})
 	if err != nil {
@@ -41,6 +44,9 @@ func initbolt() *bolt.DB {
 	return db
 }
 
+// Default state for the AC which will be used if there is no existing state when
+// the system starts.
+//
 func acDefaultState() models.ACState {
 	temp := 20
 	wind := 0
@@ -49,6 +55,8 @@ func acDefaultState() models.ACState {
 	return models.ACState{Temperature: &temp, WindLevel: &wind, Mode: &mode, Active: &active}
 }
 
+// Definition for the type of AC to be used as well as the trasmitting GPIO pin.
+//
 func hardwareInfo() accontrol.HWInterface {
 	return hwinterface.NewGPIOInterface(mappers.NewChangHong(), 27)
 }
