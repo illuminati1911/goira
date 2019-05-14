@@ -29,6 +29,8 @@ func NewAuthService(repo auth.Repository, defaultpwd models.Password) auth.Servi
 	return &AuthService{repo}
 }
 
+// IsAccessTokenValid checks if given access token has expired or not
+//
 func (as *AuthService) IsAccessTokenValid(tknvalue string) bool {
 	token, err := as.repo.GetToken(tknvalue)
 	if err != nil {
@@ -43,6 +45,8 @@ func (as *AuthService) IsAccessTokenValid(tknvalue string) bool {
 	return true
 }
 
+// RequestAccessToken requests for new access token with password as a parameter
+//
 func (as *AuthService) RequestAccessToken(userpwd models.Password) (models.Token, error) {
 	systempwd, err := as.repo.GetPassword()
 	if err != nil {

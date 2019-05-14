@@ -9,6 +9,8 @@ import (
 	"github.com/illuminati1911/goira/internal/models"
 )
 
+// BoltACRepository contains reference to BoltDB instance and bucket name
+//
 type BoltACRepository struct {
 	db     *bolt.DB
 	bucket string
@@ -18,7 +20,7 @@ const (
 	StateKey = "state"
 )
 
-// NewBoltRepository returns instance of the BoltRepository implementing
+// NewBoltACRepository returns instance of the BoltRepository implementing
 // repository interface.
 //
 func NewBoltACRepository(db *bolt.DB, bucket string) accontrol.Repository {
@@ -32,6 +34,8 @@ func NewBoltACRepository(db *bolt.DB, bucket string) accontrol.Repository {
 	return &BoltACRepository{db, bucket}
 }
 
+// GetCurrentState returns the current state of the system from the repository
+//
 func (b *BoltACRepository) GetCurrentState() (models.ACState, error) {
 	var state models.ACState
 	err := b.db.View(func(tx *bolt.Tx) error {
@@ -42,6 +46,8 @@ func (b *BoltACRepository) GetCurrentState() (models.ACState, error) {
 	return state, err
 }
 
+// SetState stores the state of the system to the repository
+//
 func (b *BoltACRepository) SetState(state models.ACState) error {
 	return b.db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(b.bucket))

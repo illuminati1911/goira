@@ -36,6 +36,8 @@ func NewBoltAuthRepository(db *bolt.DB, bucket string) auth.Repository {
 	return &BoltAuthRepository{db, bucket}
 }
 
+// GetPassword gets password from the repository
+//
 func (b *BoltAuthRepository) GetPassword() (models.Password, error) {
 	var password string
 	err := b.db.View(func(tx *bolt.Tx) error {
@@ -50,6 +52,8 @@ func (b *BoltAuthRepository) GetPassword() (models.Password, error) {
 	return password, err
 }
 
+// SetPassword sets password to the repository
+//
 func (b *BoltAuthRepository) SetPassword(pwd models.Password) error {
 	return b.db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(b.bucket))
@@ -57,6 +61,8 @@ func (b *BoltAuthRepository) SetPassword(pwd models.Password) error {
 	})
 }
 
+// GetToken gets token from the repository with token value as a key
+//
 func (b *BoltAuthRepository) GetToken(tknvalue string) (models.Token, error) {
 	var tkn models.Token
 	err := b.db.View(func(tx *bolt.Tx) error {
@@ -70,6 +76,8 @@ func (b *BoltAuthRepository) GetToken(tknvalue string) (models.Token, error) {
 	return tkn, err
 }
 
+// SetToken sets token to the repository with token value as a key
+//
 func (b *BoltAuthRepository) SetToken(tkn models.Token) error {
 	return b.db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(b.bucket))
@@ -81,6 +89,8 @@ func (b *BoltAuthRepository) SetToken(tkn models.Token) error {
 	})
 }
 
+// DeleteToken deletes token from the repository with token value as a key
+//
 func (b *BoltAuthRepository) DeleteToken(tknvalue string) error {
 	return b.db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(b.bucket))
@@ -88,6 +98,8 @@ func (b *BoltAuthRepository) DeleteToken(tknvalue string) error {
 	})
 }
 
+// CleanUp iterates through the repository and deletes expired tokens
+//
 func (b *BoltAuthRepository) CleanUp() {
 	b.db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(b.bucket))

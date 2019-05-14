@@ -34,6 +34,9 @@ func NewACService(repo accontrol.Repository, defaultState models.ACState, gpioif
 	return &ACService{repo: repo, hwif: gpioif}
 }
 
+// SetState sends the new state to the Hardware interface for IR transmission
+// and if it succees saves it to repository.
+//
 func (acs *ACService) SetState(newState models.ACState) error {
 	acs.mux.Lock()
 	defer acs.mux.Unlock()
@@ -49,12 +52,16 @@ func (acs *ACService) SetState(newState models.ACState) error {
 	return acs.repo.SetState(mergedState)
 }
 
+// GetState returns the current state of the system from the repository
+//
 func (acs *ACService) GetState() (models.ACState, error) {
 	acs.mux.Lock()
 	defer acs.mux.Unlock()
 	return acs.repo.GetCurrentState()
 }
 
+// Merge merges two AC states.
+//
 func merge(current models.ACState, new models.ACState) models.ACState {
 	if new.Temperature != nil {
 		current.Temperature = new.Temperature
