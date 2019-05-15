@@ -17,7 +17,7 @@ func NewAssert(t *testing.T) Assert {
 
 // Equals determines whether two given parameters are equal
 //
-func(as *Assert) Equals(a interface{}, b interface{}) {
+func (as *Assert) Equals(a interface{}, b interface{}) {
 	if a != b {
 		as.t.Errorf("Expected %s to be %s", a, b)
 	}
@@ -25,7 +25,7 @@ func(as *Assert) Equals(a interface{}, b interface{}) {
 
 // NotEquals determines whether two given parameters are not equal
 //
-func(as *Assert) NotEquals(a interface{}, b interface{}) {
+func (as *Assert) NotEquals(a interface{}, b interface{}) {
 	if a == b {
 		as.t.Errorf("Expected %s to not be %s", a, b)
 	}

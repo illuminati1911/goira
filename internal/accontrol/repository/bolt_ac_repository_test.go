@@ -1,22 +1,22 @@
 package repository_test
 
 import (
+	"github.com/boltdb/bolt"
+	"github.com/illuminati1911/goira/internal/accontrol"
+	"github.com/illuminati1911/goira/internal/accontrol/repository"
 	"github.com/illuminati1911/goira/internal/models"
 	"github.com/illuminati1911/goira/testutils"
-	"testing"
-	"github.com/illuminati1911/goira/internal/accontrol/repository"
-	"github.com/illuminati1911/goira/internal/accontrol"
-	"path/filepath"
 	"log"
-	"github.com/boltdb/bolt"
-	"time"
 	"os"
+	"path/filepath"
+	"testing"
+	"time"
 )
 
 const (
-	DBName       string        = "goira_test.db"
-	DBMode       os.FileMode   = 0600
-	DBTimeout    time.Duration = 1 * time.Second
+	DBName    string        = "goira_test.db"
+	DBMode    os.FileMode   = 0600
+	DBTimeout time.Duration = 1 * time.Second
 )
 
 func initbolt() *bolt.DB {
@@ -61,7 +61,6 @@ func TestIfExistingDBIsReused(t *testing.T) {
 	assert.Equals(*retainedState.Active, *state.Active)
 	db2.Close()
 }
-
 
 func TestStateSetGet(t *testing.T) {
 	defer cleanup()

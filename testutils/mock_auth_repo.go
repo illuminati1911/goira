@@ -1,17 +1,17 @@
 package testutils
 
 import (
-	"github.com/illuminati1911/goira/internal/auth"
-	"time"
 	"errors"
+	"github.com/illuminati1911/goira/internal/auth"
 	"github.com/illuminati1911/goira/internal/models"
+	"time"
 )
 
 // MockAuthRepository is a in-memory mock repository for testing
 // purposes
 //
 type MockAuthRepository struct {
-	db     map[string]interface{}
+	db map[string]interface{}
 }
 
 // NewMockAuthRepository creates a new instance of MockAuthRepository

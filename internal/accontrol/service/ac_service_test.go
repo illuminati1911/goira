@@ -1,10 +1,10 @@
 package service_test
 
 import (
-	"github.com/illuminati1911/goira/internal/models"
 	"github.com/illuminati1911/goira/internal/accontrol/service"
-	"testing"
+	"github.com/illuminati1911/goira/internal/models"
 	"github.com/illuminati1911/goira/testutils"
+	"testing"
 )
 
 func getFakeState() models.ACState {

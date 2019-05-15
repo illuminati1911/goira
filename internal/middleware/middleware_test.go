@@ -1,15 +1,15 @@
 package middleware_test
 
 import (
-	"github.com/illuminati1911/goira/internal/models"
+	"fmt"
 	"github.com/illuminati1911/goira/internal/auth/service"
 	"github.com/illuminati1911/goira/internal/middleware"
-	"fmt"
+	"github.com/illuminati1911/goira/internal/models"
 	"github.com/illuminati1911/goira/testutils"
 	"io"
-	"testing"
 	"net/http"
 	"net/http/httptest"
+	"testing"
 )
 
 var SERVER_URL string
@@ -22,7 +22,7 @@ func getServerMux() (*httptest.Server, *http.ServeMux) {
 }
 
 func makeRequest(t *testing.T, c *http.Client, method string, route string, body io.Reader, sessionToken models.Token) *http.Response {
-	r, err := http.NewRequest(method, SERVER_URL + route, body)
+	r, err := http.NewRequest(method, SERVER_URL+route, body)
 	if err != nil {
 		t.Error("Could not create request")
 	}

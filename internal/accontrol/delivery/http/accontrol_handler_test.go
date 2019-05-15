@@ -1,19 +1,19 @@
 package http_test
 
 import (
-	"github.com/illuminati1911/goira/internal/models"
-	"net/http/cookiejar"
 	"bytes"
 	"encoding/json"
+	_acHandler "github.com/illuminati1911/goira/internal/accontrol/delivery/http"
+	_acservice "github.com/illuminati1911/goira/internal/accontrol/service"
+	_authHandler "github.com/illuminati1911/goira/internal/auth/delivery/http"
+	_authService "github.com/illuminati1911/goira/internal/auth/service"
+	"github.com/illuminati1911/goira/internal/models"
+	"github.com/illuminati1911/goira/testutils"
 	"io"
 	"net/http"
+	"net/http/cookiejar"
 	"net/http/httptest"
 	"testing"
-	_authHandler "github.com/illuminati1911/goira/internal/auth/delivery/http"
-	_acHandler "github.com/illuminati1911/goira/internal/accontrol/delivery/http"
-	"github.com/illuminati1911/goira/testutils"
-	_authService "github.com/illuminati1911/goira/internal/auth/service"
-	_acservice "github.com/illuminati1911/goira/internal/accontrol/service"
 )
 
 var SERVER_URL string
@@ -30,7 +30,7 @@ func getServer() *httptest.Server {
 	authDB := testutils.NewMockAuthRepository()
 	acDB := testutils.NewMockACRepository()
 	authServ := _authService.NewAuthService(authDB, "default_pass")
-	acServ :=  _acservice.NewACService(acDB, getFakeState(), testutils.NewMockHWInterface())
+	acServ := _acservice.NewACService(acDB, getFakeState(), testutils.NewMockHWInterface())
 	mux := http.NewServeMux()
 	_authHandler.NewHTTPAuthHandler(authServ, mux)
 	_acHandler.NewHTTPACControlHandler(acServ, authServ, mux)
@@ -40,7 +40,7 @@ func getServer() *httptest.Server {
 }
 
 func makeRequest(t *testing.T, c *http.Client, method string, route string, body io.Reader) *http.Response {
-	r, err := http.NewRequest(method, SERVER_URL + route, body)
+	r, err := http.NewRequest(method, SERVER_URL+route, body)
 	if err != nil {
 		t.Error("Could not create request")
 	}
@@ -154,7 +154,7 @@ func TestWrongData(t *testing.T) {
 
 	rBody, err := json.Marshal(map[string]interface{}{
 		"tempdsfd33": "hel23423lo",
-		"lol": ":D",
+		"lol":        ":D",
 	})
 	if err != nil {
 		t.Error(err)
@@ -184,10 +184,10 @@ func TestFullData(t *testing.T) {
 	Login(t, c)
 
 	rBody, err := json.Marshal(map[string]interface{}{
-		"temp": 30,
+		"temp":   30,
 		"active": true,
-		"mode": 2,
-		"wind": 1,
+		"mode":   2,
+		"wind":   1,
 	})
 	if err != nil {
 		t.Error(err)

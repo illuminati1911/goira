@@ -10,7 +10,7 @@ import (
 // purposes
 //
 type MockACRepository struct {
-	state     *models.ACState
+	state *models.ACState
 }
 
 // NewMockACRepository creates a new instance of MockACRepository

@@ -1,22 +1,22 @@
 package repository_test
 
 import (
-	"github.com/illuminati1911/goira/internal/models"
+	"github.com/boltdb/bolt"
 	"github.com/illuminati1911/goira/internal/auth"
-	"path/filepath"
+	"github.com/illuminati1911/goira/internal/auth/repository"
+	"github.com/illuminati1911/goira/internal/models"
 	"github.com/illuminati1911/goira/testutils"
 	"log"
-	"time"
 	"os"
-	"github.com/boltdb/bolt"
-	"github.com/illuminati1911/goira/internal/auth/repository"
+	"path/filepath"
 	"testing"
+	"time"
 )
 
 const (
-	DBName       string        = "goira_test.db"
-	DBMode       os.FileMode   = 0600
-	DBTimeout    time.Duration = 1 * time.Second
+	DBName    string        = "goira_test.db"
+	DBMode    os.FileMode   = 0600
+	DBTimeout time.Duration = 1 * time.Second
 )
 
 func initbolt() *bolt.DB {

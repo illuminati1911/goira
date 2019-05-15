@@ -1,11 +1,11 @@
 package service_test
 
 import (
-	"time"
+	"github.com/illuminati1911/goira/internal/auth/service"
 	"github.com/illuminati1911/goira/internal/models"
 	"github.com/illuminati1911/goira/testutils"
 	"testing"
-	"github.com/illuminati1911/goira/internal/auth/service"
+	"time"
 )
 
 func TestDefaultPassword(t *testing.T) {
@@ -22,8 +22,8 @@ func TestTokenValidation(t *testing.T) {
 	serv := service.NewAuthService(mockDB, "default_pass")
 	validToken := models.Token{Name: "token", Value: "valid", Expires: time.Now().Add(5 * time.Hour)}
 	invalidToken := models.Token{
-		Name: "token",
-		Value: "invalid",
+		Name:    "token",
+		Value:   "invalid",
 		Expires: time.Date(2009, 11, 17, 20, 34, 58, 651387237, time.UTC)}
 	mockDB.SetToken(validToken)
 	mockDB.SetToken(invalidToken)

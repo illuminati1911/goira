@@ -2,24 +2,24 @@ package main
 
 import (
 	"fmt"
-	"os/signal"
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
 	"time"
 
 	"github.com/illuminati1911/goira/internal/models"
-	
+
 	"github.com/illuminati1911/goira/internal/accontrol"
-	"github.com/illuminati1911/goira/internal/auth"
 	_acHandler "github.com/illuminati1911/goira/internal/accontrol/delivery/http"
 	"github.com/illuminati1911/goira/internal/accontrol/hwinterface"
+	"github.com/illuminati1911/goira/internal/accontrol/mappers"
 	_accrepo "github.com/illuminati1911/goira/internal/accontrol/repository"
 	_acservice "github.com/illuminati1911/goira/internal/accontrol/service"
+	"github.com/illuminati1911/goira/internal/auth"
 	_authHandler "github.com/illuminati1911/goira/internal/auth/delivery/http"
 	_authrepo "github.com/illuminati1911/goira/internal/auth/repository"
 	_authservice "github.com/illuminati1911/goira/internal/auth/service"
-	"github.com/illuminati1911/goira/internal/accontrol/mappers"
 
 	"github.com/boltdb/bolt"
 )
@@ -66,9 +66,9 @@ func hardwareInfo() accontrol.HWInterface {
 func tokenCleanUp(repo auth.Repository) *time.Ticker {
 	ticker := time.NewTicker(1 * time.Hour)
 	go func() {
-        for range ticker.C {
-            repo.CleanUp()
-        }
+		for range ticker.C {
+			repo.CleanUp()
+		}
 	}()
 	return ticker
 }

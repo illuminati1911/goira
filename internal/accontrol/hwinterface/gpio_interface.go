@@ -7,9 +7,9 @@ package hwinterface
 import "C"
 import (
 	"errors"
-	"unsafe"
 	"github.com/illuminati1911/goira/internal/accontrol"
 	"github.com/illuminati1911/goira/internal/models"
+	"unsafe"
 )
 
 // GPIOInterface handles mapping the ACState model to binary code
@@ -17,7 +17,7 @@ import (
 //
 type GPIOInterface struct {
 	mapper accontrol.Mapper
-	pin uint
+	pin    uint
 }
 
 // NewGPIOInterface creates new instance of GPIOInterface

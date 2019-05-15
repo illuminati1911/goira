@@ -1,10 +1,10 @@
 package service
 
 import (
-	"sync"
 	"errors"
 	"fmt"
 	"log"
+	"sync"
 
 	"github.com/illuminati1911/goira/internal/accontrol"
 	"github.com/illuminati1911/goira/internal/models"
@@ -16,7 +16,7 @@ import (
 type ACService struct {
 	repo accontrol.Repository
 	hwif accontrol.HWInterface
-	mux sync.Mutex
+	mux  sync.Mutex
 }
 
 // NewACService creates new ACService with storage system implementing
