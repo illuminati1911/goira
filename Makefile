@@ -1,4 +1,4 @@
-.DEFAULT_GOAL := install
+.DEFAULT_GOAL := all
 
 get-pigpio:
 	@echo "Fetching and installing pigpio..."
@@ -23,6 +23,8 @@ build:
 	@echo "Building Goira..."
 	@go build ./cmd/main.go
 	@echo "Build completed!"
-install: deps build
+all: deps build test
 test:
-	@go test -v -race ./...
+	@go test -race ./...
+	@go vet ./...
+	@bash -c "diff -u <(echo -n) <(gofmt -d -s .)"
