@@ -23,7 +23,7 @@ type ACService struct {
 // repository interface.
 //
 func NewACService(repo accontrol.Repository, defaultState models.ACState, gpioif accontrol.HWInterface) accontrol.Service {
-	_, err := repo.GetCurrentState()
+	_, err := repo.GetState()
 	if err == nil {
 		return &ACService{repo: repo, hwif: gpioif}
 	}
@@ -40,7 +40,7 @@ func NewACService(repo accontrol.Repository, defaultState models.ACState, gpioif
 func (acs *ACService) SetState(newState models.ACState) error {
 	acs.mux.Lock()
 	defer acs.mux.Unlock()
-	state, err := acs.repo.GetCurrentState()
+	state, err := acs.repo.GetState()
 	if err != nil {
 		return err
 	}
@@ -52,12 +52,12 @@ func (acs *ACService) SetState(newState models.ACState) error {
 	return acs.repo.SetState(mergedState)
 }
 
-// GetState returns the current state of the system from the repository
+// GetState returns the  state of the system from the repository
 //
 func (acs *ACService) GetState() (models.ACState, error) {
 	acs.mux.Lock()
 	defer acs.mux.Unlock()
-	return acs.repo.GetCurrentState()
+	return acs.repo.GetState()
 }
 
 // Merge merges two AC states.

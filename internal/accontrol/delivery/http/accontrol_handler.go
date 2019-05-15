@@ -35,7 +35,7 @@ func NewHTTPACControlHandler(as accontrol.Service, authS auth.Service, mux *http
 	return handler
 }
 
-// GetState handler will get the current state of the AC from the
+// GetState handler will get the  state of the AC from the
 // ac service.
 //
 func (h *HTTPACControlHandler) GetState(w http.ResponseWriter, r *http.Request) {

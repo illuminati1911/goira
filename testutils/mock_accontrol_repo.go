@@ -19,9 +19,9 @@ func NewMockACRepository() accontrol.Repository {
 	return &MockACRepository{nil}
 }
 
-// GetCurrentState returns current state from memory
+// GetState returns  state from memory
 //
-func (m *MockACRepository) GetCurrentState() (models.ACState, error) {
+func (m *MockACRepository) GetState() (models.ACState, error) {
 	if m.state != nil {
 		return *m.state, nil
 	}

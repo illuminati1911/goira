@@ -34,9 +34,9 @@ func NewBoltACRepository(db *bolt.DB, bucket string) accontrol.Repository {
 	return &BoltACRepository{db, bucket}
 }
 
-// GetCurrentState returns the current state of the system from the repository
+// GetState returns the  state of the system from the repository
 //
-func (b *BoltACRepository) GetCurrentState() (models.ACState, error) {
+func (b *BoltACRepository) GetState() (models.ACState, error) {
 	var state models.ACState
 	err := b.db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(b.bucket))

@@ -5,6 +5,6 @@ import (
 )
 
 type Repository interface {
-	GetCurrentState() (models.ACState, error)
+	GetState() (models.ACState, error)
 	SetState(models.ACState) error
 }
