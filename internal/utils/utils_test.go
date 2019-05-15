@@ -14,7 +14,7 @@ func TestMin(t *testing.T) {
 	assert.Equals(utils.Min(-1, 0), -1)
 	assert.Equals(utils.Min(0, -1), -1)
 	assert.Equals(utils.Min(0, 0), 0)
-	assert.Equals(utils.Min(999999999, 9999999999), 999999999)
+	assert.Equals(utils.Min(999999, 999999), 999999)
 }
 
 func TestMax(t *testing.T) {
