@@ -8,12 +8,13 @@ get-pigpio:
 	&& sudo make install
 	@sudo rm -rf pigpio
 	@echo "Installing pigpio completed!"
-get-irslinger:
+update-irslinger:
 	@echo "Fetching ir-slinger..."
 	@git clone https://github.com/bschwind/ir-slinger.git
+	@rm -f internal/accontrol/hwinterface/irslinger.h
 	@mv ir-slinger/irslinger.h internal/accontrol/hwinterface/
 	@rm -rf ir-slinger
-deps: get-pigpio get-irslinger
+deps: get-pigpio
 	@echo ""
 	@echo ""
 	@echo "===================================="
@@ -23,3 +24,5 @@ build:
 	@go build ./cmd/main.go
 	@echo "Build completed!"
 install: deps build
+test:
+	@go test -v -race ./...

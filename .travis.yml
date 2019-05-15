@@ -1,6 +1,11 @@
 language: go
 
 go:
-- "1.12"
+- "1.12.x"
+- master
 env:
 - GO111MODULE=on
+script:
+  - make test
+  - go vet ./...
+  - diff -u <(echo -n) <(gofmt -d -s .)
