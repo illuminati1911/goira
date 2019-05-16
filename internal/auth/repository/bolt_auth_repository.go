@@ -108,7 +108,8 @@ func (b *BoltAuthRepository) CleanUp() {
 		for k, v := c.First(); k != nil; k, v = c.Next() {
 			var tkn models.Token
 			if json.Unmarshal(v, &tkn) != nil {
-				toDelete = append(toDelete, k)
+				// Prevents password from being cleaned with tokens.
+				//
 				continue
 			}
 			fmt.Printf("key=%s, value=%s\n", k, tkn.Expires)

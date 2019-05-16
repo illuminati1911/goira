@@ -1,11 +1,13 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 	"time"
 
 	"github.com/illuminati1911/goira/internal/models"
@@ -55,6 +57,25 @@ func acDefaultState() models.ACState {
 	return models.ACState{Temperature: &temp, WindLevel: &wind, Mode: &mode, Active: &active}
 }
 
+// Get server port from parameters.
+//
+func getPort() int {
+	portPtr := flag.Int("port", 8080, "server port")
+	flag.Parse()
+	return *portPtr
+}
+
+// Gets password from envvar "GOIRA_PASSWORD". If none exists
+// uses "default_password".
+//
+func getEnvPassword() string {
+	p := os.Getenv("GOIRA_PASSWORD")
+	if p == "" {
+		return "default_password"
+	}
+	return p
+}
+
 // Definition for the type of AC to be used as well as the trasmitting GPIO pin.
 //
 func hardwareInfo() accontrol.HWInterface {
@@ -100,7 +121,7 @@ func main() {
 	dbAC := _accrepo.NewBoltACRepository(db, DBACBucket)
 	// Services
 	//
-	serviceAuth := _authservice.NewAuthService(dbAuth, "dev_pwd")
+	serviceAuth := _authservice.NewAuthService(dbAuth, getEnvPassword())
 	serviceAC := _acservice.NewACService(dbAC, acDefaultState(), hardwareInfo())
 	// HTTP handlers
 	//
@@ -113,5 +134,6 @@ func main() {
 	handleShutdown(t, db)
 	// Run HTTP
 	//
-	log.Fatal(http.ListenAndServe(":8080", mux))
+	fPort := ":" + strconv.Itoa(getPort())
+	log.Fatal(http.ListenAndServe(fPort, mux))
 }

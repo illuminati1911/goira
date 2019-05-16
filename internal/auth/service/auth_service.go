@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"time"
 
@@ -11,6 +12,9 @@ import (
 	"github.com/illuminati1911/goira/internal/models"
 )
 
+// AuthService is a service structure containing all
+// actions related to authentication.
+//
 type AuthService struct {
 	repo auth.Repository
 }
@@ -21,11 +25,13 @@ type AuthService struct {
 func NewAuthService(repo auth.Repository, defaultpwd models.Password) auth.Service {
 	_, err := repo.GetPassword()
 	if err == nil {
+		fmt.Println("Using existing repository and password.")
 		return &AuthService{repo}
 	}
 	if repo.SetPassword(defaultpwd) != nil {
-		log.Fatal("Auth: Can't create default password")
+		log.Fatal("Auth: Can't set default password")
 	}
+	fmt.Println("Created a new repository with given password.")
 	return &AuthService{repo}
 }
 
