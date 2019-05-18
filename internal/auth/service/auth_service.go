@@ -10,6 +10,7 @@ import (
 
 	"github.com/illuminati1911/goira/internal/auth"
 	"github.com/illuminati1911/goira/internal/models"
+	"github.com/illuminati1911/goira/internal/utils"
 )
 
 // AuthService is a service structure containing all
@@ -28,7 +29,7 @@ func NewAuthService(repo auth.Repository, defaultpwd models.Password) auth.Servi
 		fmt.Println("Using existing repository and password.")
 		return &AuthService{repo}
 	}
-	if repo.SetPassword(defaultpwd) != nil {
+	if repo.SetPassword(utils.SHA256(defaultpwd)) != nil {
 		log.Fatal("Auth: Can't set default password")
 	}
 	fmt.Println("Created a new repository with given password.")
@@ -58,7 +59,7 @@ func (as *AuthService) RequestAccessToken(userpwd models.Password) (models.Token
 	if err != nil {
 		return models.Token{}, err
 	}
-	if systempwd != userpwd {
+	if systempwd != utils.SHA256(userpwd) {
 		return models.Token{}, errors.New("Wrong password")
 	}
 	uuidtoken, err := uuid.NewRandom()

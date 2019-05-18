@@ -3,6 +3,7 @@ package service_test
 import (
 	"github.com/illuminati1911/goira/internal/auth/service"
 	"github.com/illuminati1911/goira/internal/models"
+	"github.com/illuminati1911/goira/internal/utils"
 	"github.com/illuminati1911/goira/testutils"
 	"testing"
 	"time"
@@ -13,7 +14,7 @@ func TestDefaultPassword(t *testing.T) {
 	mockDB := testutils.NewMockAuthRepository()
 	service.NewAuthService(mockDB, "default_pass")
 	password, _ := mockDB.GetPassword()
-	assert.Equals(password, "default_pass")
+	assert.Equals(password, utils.SHA256("default_pass"))
 }
 
 func TestTokenValidation(t *testing.T) {

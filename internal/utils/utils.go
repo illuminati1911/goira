@@ -1,5 +1,10 @@
 package utils
 
+import (
+	"crypto/sha256"
+	"fmt"
+)
+
 // Clamp limits value between two integers
 //
 // See also: https://en.cppreference.com/w/cpp/algorithm/clamp
@@ -37,4 +42,11 @@ func Reverse(b byte) byte {
 	b = (b&0xCC)>>2 | (b&0x33)<<2
 	b = (b&0xAA)>>1 | (b&0x55)<<1
 	return b
+}
+
+// SHA256 returns SHA256 hash for the given string
+//
+func SHA256(s string) string {
+	sha256 := sha256.Sum256([]byte(s))
+	return fmt.Sprintf("%x", sha256)
 }
