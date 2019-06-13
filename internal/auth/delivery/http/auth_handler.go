@@ -26,8 +26,9 @@ func NewHTTPAuthHandler(as auth.Service, mux *http.ServeMux) *HTTPAuthHandler {
 		as,
 	}
 	requireAuth := mw.AuthMiddleware(as)
-	requireAuthGet := mw.Join(requireAuth, mw.GetOnly)
-	mux.HandleFunc("/login", mw.PostOnly(handler.Login))
+	requireAuthGet := mw.Join(requireAuth, mw.GetOnly, mw.Cors)
+	post := mw.Join(mw.PostOnly, mw.Cors)
+	mux.HandleFunc("/login", post(handler.Login))
 	mux.HandleFunc("/test", requireAuthGet(handler.Test))
 	return handler
 }

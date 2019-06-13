@@ -28,8 +28,8 @@ func NewHTTPACControlHandler(as accontrol.Service, authS auth.Service, mux *http
 		as,
 	}
 	requireAuth := mw.AuthMiddleware(authS)
-	requireAuthPost := mw.Join(requireAuth, mw.PostOnly)
-	requireAuthGet := mw.Join(requireAuth, mw.GetOnly)
+	requireAuthPost := mw.Join(requireAuth, mw.PostOnly, mw.Cors)
+	requireAuthGet := mw.Join(requireAuth, mw.GetOnly, mw.Cors)
 	mux.HandleFunc("/status", requireAuthGet(handler.GetState))
 	mux.HandleFunc("/state", requireAuthPost(handler.SetState))
 	return handler

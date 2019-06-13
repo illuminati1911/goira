@@ -42,6 +42,15 @@ func AuthMiddleware(as auth.Service) MWFunc {
 	}
 }
 
+// Cors sets the Cross-Origin policy to allow all origins.
+//
+func Cors(f http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		f(w, r)
+	}
+}
+
 // PostOnly only allows POST requests to proceed.
 //
 func PostOnly(f http.HandlerFunc) http.HandlerFunc {
