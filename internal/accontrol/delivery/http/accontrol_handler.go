@@ -28,8 +28,8 @@ func NewHTTPACControlHandler(as accontrol.Service, authS auth.Service, mux *http
 		as,
 	}
 	requireAuth := mw.AuthMiddleware(authS)
-	requireAuthPost := mw.Join(requireAuth, mw.PostOnly, mw.Cors)
-	requireAuthGet := mw.Join(requireAuth, mw.GetOnly, mw.Cors)
+	requireAuthPost := mw.Join(mw.Cors, requireAuth, mw.PostOnly)
+	requireAuthGet := mw.Join(mw.Cors, requireAuth, mw.GetOnly)
 	mux.HandleFunc("/status", requireAuthGet(handler.GetState))
 	mux.HandleFunc("/state", requireAuthPost(handler.SetState))
 	return handler
@@ -64,9 +64,17 @@ func (h *HTTPACControlHandler) SetState(w http.ResponseWriter, r *http.Request) 
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	if h.as.SetState(state) != nil {
+	newState, err := h.as.SetState(state)
+	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+	jState, err := json.Marshal(newState)
+	if err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	w.Write(jState)
 }

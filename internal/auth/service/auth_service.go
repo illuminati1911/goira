@@ -66,6 +66,6 @@ func (as *AuthService) RequestAccessToken(userpwd models.Password) (models.Token
 	if err != nil {
 		return models.Token{}, errors.New("System failure")
 	}
-	token := models.Token{Name: "session_token", Value: uuidtoken.String(), Expires: time.Now().Add(5 * time.Minute)}
+	token := models.Token{Name: "session_token", Value: uuidtoken.String(), Expires: time.Now().Add(1 * time.Hour)}
 	return token, as.repo.SetToken(token)
 }

@@ -5,6 +5,6 @@ import (
 )
 
 type Service interface {
-	SetState(models.ACState) error
+	SetState(models.ACState) (models.ACState, error)
 	GetState() (models.ACState, error)
 }

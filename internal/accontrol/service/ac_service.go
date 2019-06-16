@@ -37,19 +37,24 @@ func NewACService(repo accontrol.Repository, defaultState models.ACState, gpioif
 // SetState sends the new state to the Hardware interface for IR transmission
 // and if it succees saves it to repository.
 //
-func (acs *ACService) SetState(newState models.ACState) error {
+func (acs *ACService) SetState(newState models.ACState) (models.ACState, error) {
 	acs.mux.Lock()
 	defer acs.mux.Unlock()
 	state, err := acs.repo.GetState()
 	if err != nil {
-		return err
+		return state, err
 	}
 	mergedState := merge(state, newState)
 	if acs.hwif.SetState(mergedState) != nil {
 		fmt.Println("GPIO link failure")
-		return errors.New("IR Hardware failure")
+		return mergedState, errors.New("IR Hardware failure")
 	}
-	return acs.repo.SetState(mergedState)
+	err = acs.repo.SetState(mergedState)
+	if err != nil {
+		fmt.Println("Database failure")
+		return mergedState, errors.New("Database failure: Could not set new state")
+	}
+	return mergedState, err
 }
 
 // GetState returns the  state of the system from the repository

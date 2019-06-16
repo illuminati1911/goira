@@ -44,9 +44,17 @@ func AuthMiddleware(as auth.Service) MWFunc {
 
 // Cors sets the Cross-Origin policy to allow all origins.
 //
+// TODO: Make this default for all requests instead of manual input!
+//
 func Cors(f http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Accept, Authorization, Content-Type")
+		w.Header().Set("Access-Control-Allow-Credentials", "true")
+		if r.Method == "OPTIONS" {
+			return
+		}
 		f(w, r)
 	}
 }
