@@ -5,6 +5,5 @@ go:
 env:
 - GO111MODULE=on
 script:
-  - make deps
   - make build
   - make test
