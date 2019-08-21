@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/illuminati1911/goira/internal/models"
+	"github.com/illuminati1911/goira/internal/utils/httputils"
 
 	"github.com/illuminati1911/goira/internal/accontrol"
 	_acHandler "github.com/illuminati1911/goira/internal/accontrol/delivery/http"
@@ -128,6 +129,9 @@ func main() {
 	mux := http.NewServeMux()
 	_authHandler.NewHTTPAuthHandler(serviceAuth, mux)
 	_acHandler.NewHTTPACControlHandler(serviceAC, serviceAuth, mux)
+	// Serve frontend
+	//
+	mux.Handle("/", httputils.CatchAllHandler(http.FileServer(http.Dir("./frontend"))))
 	// CleanUp
 	//
 	t := tokenCleanUp(dbAuth)
