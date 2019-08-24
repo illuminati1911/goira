@@ -1,9 +1,7 @@
 # Goira - Go Infrared API
-
-[![Build Status](https://travis-ci.com/illuminati1911/goira.svg?branch=master)](https://travis-ci.com/illuminati1911/goira)
-[![Go Report Card](https://goreportcard.com/badge/github.com/illuminati1911/goira)](https://goreportcard.com/report/github.com/illuminati1911/goira)
-
 <p>
+  <a href="https://travis-ci.com/illuminati1911/goira"><img alt="Build Status" src="https://travis-ci.com/illuminati1911/goira.svg?branch=master" target="_blank" /></a>
+  <a href="https://goreportcard.com/report/github.com/illuminati1911/goira"><img alt="Go Report Card" src="https://goreportcard.com/badge/github.com/illuminati1911/goira" target="_blank" /></a>
   <img alt="Documentation" src="https://img.shields.io/badge/documentation-yes-brightgreen.svg" target="_blank" />
   <img alt="Maintenance" src="https://img.shields.io/badge/Maintained%3F-yes-green.svg" target="_blank" />
   <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg" target="_blank" />
